@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useRef, useState } from "react";
 import kaplay, { KaboomCtx } from "kaplay";
 
@@ -12,7 +12,7 @@ interface Task {
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const kaplayCtx = useRef<KaboomCtx>(null);
+  const kaplayCtx = useRef<KaboomCtx | null>(null);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -175,18 +175,25 @@ export default function Page() {
     <>
       <canvas ref={canvasRef} width="100%" height={400}></canvas>
 
-      {tasks.map((task) => (
-        <div key={task.id}>
-          <input
-            type="checkbox"
-            checked={task.completed}
-            onChange={(e) => {
-              updateTaskCompletion(task.id, e.target.checked);
-            }}
-          />
-          {task.name}
-        </div>
-      ))}
+      <div className="flex flex-col items-start gap-2 p-4">
+        <h2 className="text-2xl font-bold">Tasks</h2>
+        {tasks.map((task) => (
+          <label key={task.id} className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={(e) => {
+                updateTaskCompletion(task.id, e.target.checked);
+              }}
+              className="h-4 w-4 rounded border-gray-300"
+            />
+            <p className={`text-md ${task.completed ? "line-through" : ""}`}>
+              {task.name}
+            </p>
+          </label>
+        ))}
+      </div>
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -196,18 +203,24 @@ export default function Page() {
             description: "",
             completed: false,
           });
+          setInput("");
         }}
+        className="flex flex-col gap-2 p-4 bg-white items-start"
       >
-        <label htmlFor="name">Task Name</label>
+        <label htmlFor="name">Add Task</label>
         <input
           type="text"
           id="name"
           onChange={(e) => setInput(e.target.value)}
+          placeholder="Task Name"
           autoComplete="off"
           autoCorrect="off"
           autoCapitalize="off"
+          className="w-[50%] p-2 border border-gray-300 rounded-md"
         />
-        <button>Add</button>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Add
+        </button>
       </form>
       <button onClick={() => setTasks([])}>Clear</button>
     </>
