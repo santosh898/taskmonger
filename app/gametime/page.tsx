@@ -1,12 +1,17 @@
-"use client"
+"use client";
 import { useEffect, useRef, useState } from "react";
 import kaplay, { KaboomCtx } from "kaplay";
+import AllTasks from "@/components/tasks/AllTasks";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import TimeView from "@/components/tasks/TimeView";
+import FocusView from "@/components/tasks/FocusView";
 
 interface Task {
   id: string;
   name: string;
   description: string;
   completed: boolean;
+  category?: string;
 }
 
 export default function Page() {
@@ -40,12 +45,7 @@ export default function Page() {
     }
   }, []);
 
-  const [input, setInput] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
-
-  const addTask = (task: Task) => {
-    setTasks((tasks) => [...tasks, task]);
-  };
 
   const replaceStringAt = function (
     str: string,
@@ -163,53 +163,28 @@ export default function Page() {
     k.go("game");
   }, [tasks]);
 
-  const updateTaskCompletion = (taskId: string, completed: boolean) => {
-    const task = tasks.find((t) => t.id === taskId);
-    if (task) {
-      task.completed = completed;
-      setTasks([...tasks]);
-    }
-  };
-
   return (
     <>
       <canvas ref={canvasRef} width="100%" height={400}></canvas>
 
-      {tasks.map((task) => (
-        <div key={task.id}>
-          <input
-            type="checkbox"
-            checked={task.completed}
-            onChange={(e) => {
-              updateTaskCompletion(task.id, e.target.checked);
-            }}
-          />
-          {task.name}
-        </div>
-      ))}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          addTask({
-            id: String(tasks.length),
-            name: input,
-            description: "",
-            completed: false,
-          });
-        }}
-      >
-        <label htmlFor="name">Task Name</label>
-        <input
-          type="text"
-          id="name"
-          onChange={(e) => setInput(e.target.value)}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-        />
-        <button>Add</button>
-      </form>
-      <button onClick={() => setTasks([])}>Clear</button>
+      <Tabs defaultValue="all">
+        {/* TabsList for view selection */}
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all">All Tasks</TabsTrigger>
+          <TabsTrigger value="kanban">Time View</TabsTrigger>
+          <TabsTrigger value="focus">Focus View</TabsTrigger>
+        </TabsList>
+        {/* TabsContent for rendering the selected view */}
+        <TabsContent value="all">
+          <AllTasks tasks={tasks} setTasks={setTasks} />
+        </TabsContent>
+        <TabsContent value="kanban">
+          <TimeView tasks={tasks} setTasks={setTasks} />
+        </TabsContent>
+        <TabsContent value="focus">
+          <FocusView tasks={tasks} setTasks={setTasks} />
+        </TabsContent>
+      </Tabs>
     </>
   );
 }
