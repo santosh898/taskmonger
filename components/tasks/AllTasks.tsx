@@ -70,6 +70,7 @@ const AllTasks: React.FC = ({tasks, setTasks}: any) => {
               name: input,
               description: "",
               completed: false,
+              category: "noCategory"
             });
             setInput(""); // Clear the input after adding the task
           }

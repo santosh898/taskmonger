@@ -5,6 +5,7 @@ import AllTasks from "@/components/tasks/AllTasks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TimeView from "@/components/tasks/TimeView";
 import FocusView from "@/components/tasks/FocusView";
+import KanbanBoard from "@/components/kanban/KanbanBoard";
 
 interface Task {
   id: string;
@@ -179,7 +180,7 @@ export default function Page() {
           <AllTasks tasks={tasks} setTasks={setTasks} />
         </TabsContent>
         <TabsContent value="kanban">
-          <TimeView tasks={tasks} setTasks={setTasks} />
+          <KanbanBoard tasks={tasks} setTasks={setTasks} />
         </TabsContent>
         <TabsContent value="focus">
           <FocusView tasks={tasks} setTasks={setTasks} />

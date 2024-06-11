@@ -1,8 +1,18 @@
-// This is a KANBAN
-
-import { useState, useEffect } from "react";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import TaskCard from "./TaskCard";
+import React, { useState, useEffect } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  useDroppable,
+  useDraggable,
+  DragEndEvent,
+  UniqueIdentifier,
+} from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
+import TaskCard from './TaskCard';
 
 interface Task {
   id: string;
@@ -12,188 +22,128 @@ interface Task {
   category?: string;
 }
 
-interface TimeViewProps {
+interface KanbanProps {
   tasks: Task[];
   setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
-const TimeView: React.FC<TimeViewProps> = ({ tasks, setTasks }) => {
+interface ColumnProps {
+  id: string;
+  title: string;
+  tasks: Task[];
+}
+
+const Column: React.FC<ColumnProps> = ({ id, title, tasks }) => {
+  const { setNodeRef } = useDroppable({
+    id,
+  });
+
+  return (
+    <div ref={setNodeRef} className="w-1/4 p-4 bg-gray-100 rounded">
+      <h2 className="mb-4 text-lg font-semibold">{title}</h2>
+      {tasks.map((task, index) => (
+        <DraggableItem key={task.id} task={task} />
+      ))}
+    </div>
+  );
+};
+
+interface DraggableItemProps {
+  task: Task;
+}
+
+const DraggableItem: React.FC<DraggableItemProps> = ({ task }) => {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: task.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    marginBottom: '1rem', // Add some space between tasks
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+      <TaskCard task={task} />
+    </div>
+  );
+};
+
+const Kanban: React.FC<KanbanProps> = ({ tasks, setTasks }) => {
   const [nowTasks, setNowTasks] = useState<Task[]>([]);
   const [nextTasks, setNextTasks] = useState<Task[]>([]);
   const [laterTasks, setLaterTasks] = useState<Task[]>([]);
   const [uncategorizedTasks, setUncategorizedTasks] = useState<Task[]>([]);
 
-  // Initialize tasks when tasks prop changes
   useEffect(() => {
-    // Clear previous state
-    setNowTasks([]);
-    setNextTasks([]);
-    setLaterTasks([]);
-    setUncategorizedTasks([]);
+    const categorizedTasks = {
+      now: [] as Task[],
+      next: [] as Task[],
+      later: [] as Task[],
+      uncategorized: [] as Task[],
+    };
 
-    // Categorize tasks
     tasks.forEach((task) => {
       switch (task.category) {
-        case "Now":
-          setNowTasks((prevTasks) => [...prevTasks, task]);
+        case 'Now':
+          categorizedTasks.now.push(task);
           break;
-        case "Next":
-          setNextTasks((prevTasks) => [...prevTasks, task]);
+        case 'Next':
+          categorizedTasks.next.push(task);
           break;
-        case "Later":
-          setLaterTasks((prevTasks) => [...prevTasks, task]);
+        case 'Later':
+          categorizedTasks.later.push(task);
           break;
         default:
-          setUncategorizedTasks((prevTasks) => [...prevTasks, task]);
+          categorizedTasks.uncategorized.push(task);
           break;
       }
     });
+
+    setNowTasks(categorizedTasks.now);
+    setNextTasks(categorizedTasks.next);
+    setLaterTasks(categorizedTasks.later);
+    setUncategorizedTasks(categorizedTasks.uncategorized);
   }, [tasks]);
 
-  // Handle drag end
-  const handleDragEnd = (result: any) => {
-    const { source, destination, draggableId } = result;
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
 
-    // If dropped outside the list
-    if (!destination) {
-      return;
-    }
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
 
-    // If dropped in the same list
-    if (source.droppableId === destination.droppableId) {
-      switch (source.droppableId) {
-        case "now":
-          setNowTasks((prevTasks) => reorderTasks(prevTasks, source.index, destination.index));
-          break;
-        case "next":
-          setNextTasks((prevTasks) => reorderTasks(prevTasks, source.index, destination.index));
-          break;
-        case "later":
-          setLaterTasks((prevTasks) => reorderTasks(prevTasks, source.index, destination.index));
-          break;
-        case "uncategorized":
-          setUncategorizedTasks((prevTasks) => reorderTasks(prevTasks, source.index, destination.index));
-          break;
-        default:
-          break;
-      }
-    } else {
-      // If dropped in a different list
-      const updatedTasks = [...tasks];
-      const task = updatedTasks.find((task) => task.id === draggableId);
-      if (task) {
-        task.category = destination.droppableId;
-        setTasks(updatedTasks);
-      }
+    const updatedTasks = [...tasks];
+    const task = updatedTasks.find((task) => task.id === active.id);
+
+    if (task) {
+      task.category = over.id as string;
+      setTasks(updatedTasks);
     }
   };
 
-  // Reorder tasks within the same list
-  const reorderTasks = (list: Task[], startIndex: number, endIndex: number): Task[] => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
-  };
+  const columns = [
+    { id: 'uncategorized', title: 'No Category', tasks: uncategorizedTasks },
+    { id: 'now', title: 'Now', tasks: nowTasks },
+    { id: 'next', title: 'Next', tasks: nextTasks },
+    { id: 'later', title: 'Later', tasks: laterTasks },
+  ];
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex justify-between">
-
-        {/* UNCATEGORIZED */}
-      <Droppable droppableId="now">
-          {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps} className="flex-1">
-              <h2>No Category</h2>
-              {uncategorizedTasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <TaskCard task={task} />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-
-        {/* NOW */}
-        <Droppable droppableId="now">
-          {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps} className="flex-1">
-              <h2>Now</h2>
-              {nowTasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <TaskCard task={task} />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-
-        {/* NEXT */}
-        <Droppable droppableId="next">
-          {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps} className="flex-1">
-              <h2>Next</h2>
-              {nextTasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <TaskCard task={task} />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-
-          {/* LATER */}
-        <Droppable droppableId="later">
-          {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps} className="flex-1">
-              <h2>Later</h2>
-              {laterTasks.map((task, index) => (
-                <Draggable key={task.id} draggableId={task.id} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <TaskCard task={task} />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <div className="flex space-x-4">
+        {columns.map((column) => (
+          <Column key={column.id} id={column.id} title={column.title} tasks={column.tasks} />
+        ))}
       </div>
-    </DragDropContext>
+    </DndContext>
   );
 };
 
-export default TimeView;
+export default Kanban;

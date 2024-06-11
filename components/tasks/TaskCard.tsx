@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface Task {
   id: string;
@@ -14,12 +14,9 @@ interface TaskCardProps {
 
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 mb-2">
-      <h3 className="text-lg font-semibold">{task.name}</h3>
-      <p className="text-sm text-gray-600">{task.description}</p>
-      <p className="text-xs mt-2">
-        {task.completed ? "Completed" : "Incomplete"}
-      </p>
+    <div className="p-4 bg-white rounded shadow">
+      <h3>{task.name}</h3>
+      <p>{task.description}</p>
     </div>
   );
 };
