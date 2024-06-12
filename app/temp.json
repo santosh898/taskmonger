@@ -1,0 +1,140 @@
+{
+  "yourGoal": "Run a half marathon in 6 weeks",
+  "week1": {
+    "task1": {
+      "taskname": "Start by walking for 30 minutes 3 times a week",
+      "timeToComplete": "30 minutes per session",
+      "task requirements": "Good pair of walking shoes"
+    },
+    "task2": {
+      "taskname": "Add in 1-2 minutes of jogging intervals during each walk",
+      "timeToComplete": "30 minutes per session",
+      "task requirements": "Interval timer"
+    }
+  },
+  "week2": {
+    "task1": {
+      "taskname": "Increase jogging intervals to 3-5 minutes each walk",
+      "timeToComplete": "30 minutes per session",
+      "task requirements": "Proper running form"
+    },
+    "task2": {
+      "taskname": "Start tracking your distance covered during each session",
+      "timeToComplete": "30 minutes per session",
+      "task requirements": "Running app or watch"
+    }
+  },
+  "week3": {
+    "task1": {
+      "taskname": "Focus on running continuously for 1-2 miles without stopping",
+      "timeToComplete": "30-40 minutes per session",
+      "task requirements": "Hydration pack or water bottle"
+    },
+    "task2": {
+      "taskname": "Incorporate a longer weekend run of 3-4 miles at a comfortable pace",
+      "timeToComplete": "60 minutes",
+      "task requirements": "Energy gels or snacks for fuel"
+    }
+  },
+  "week4": {
+    "task1": {
+      "taskname": "Work on increasing your long run to 5-6 miles gradually",
+      "timeToComplete": "90 minutes",
+      "task requirements": "Foam roller for muscle recovery"
+    },
+    "task2": {
+      "taskname": "Implement a cross-training day with low-impact exercises like swimming or cycling",
+      "timeToComplete": "60 minutes",
+      "task requirements": "Access to a pool or stationary bike"
+    }
+  },
+  "week5": {
+    "task1": {
+      "taskname": "Continue to build endurance with a 7-8 mile long run",
+      "timeToComplete": "120 minutes",
+      "task requirements": "Motivational music playlist"
+    },
+    "task2": {
+      "taskname": "Practice pacing by running a 5K at a comfortable pace",
+      "timeToComplete": "30-40 minutes",
+      "task requirements": "Race bib for motivation"
+    }
+  },
+  "week6": {
+    "task1": {
+      "taskname": "Taper your training with shorter runs leading up to the race",
+      "timeToComplete": "30-45 minutes per session",
+      "task requirements": "Good rest and recovery"
+    },
+    "task2": {
+      "taskname": "Carb load and stay hydrated the day before the race",
+      "timeToComplete": "N/A",
+      "task requirements": "Healthy carb-rich meals and plenty of water"
+    }
+  }
+}
+
+
+// 3.5 turbo with max token 512 
+
+{
+   caveat: "Running a half marathon in 6 weeks from being an ultra noob is not a realistic goal and may lead to injuries. It's important to gradually build up your running endurance to prevent injuries and progress safely.",
+   yourGoal: "Run a half marathon",
+   week1: {
+      task1: {
+         taskname: "Start with a walk/run program (e.g., walk for 3 minutes, run for 1 minute, repeat)",
+         timeToComplete: 3 days,
+         task requirements: "Comfortable workout clothes and shoes"
+      },
+      task2: {
+         taskname: "Consistent daily stretching routine to prevent injuries",
+         timeToComplete: 5 days,
+         task requirements: "Yoga mat or soft surface"
+      }
+   },
+   week2: {
+      task1: {
+         taskname: "Increase run intervals (e.g., walk for 2 minutes, run for 2 minutes)",
+         timeToComplete: 4 days,
+         task requirements: "Hydration pack or water bottle"
+      },
+      task2: {
+         taskname: "Research proper running form and technique",
+         timeToComplete: 2 days,
+         task requirements: "Internet access"
+      }
+   },
+   week3: {
+      task1: {
+         taskname: "Gradually increase running intervals (e.g., walk for 1 minute, run for 3 minutes)",
+         timeToComplete: 5 days,
+         task requirements: "Foam roller for muscle recovery"
+      },
+      task2: {
+         taskname: "Introduce strength training exercises for legs (e.g., squats, lunges)",
+         timeToComplete: 4 days,
+         task requirements: "Dumbbells or resistance bands"
+      }
+   },
+   week4: {
+      task1: {
+         taskname: "Focus on increasing overall running distance each session",
+         timeToComplete: 5 days,
+         task requirements: "Running watch or app to track distance"
+      },
+      task2: {
+         taskname: "Incorporate a rest and recovery day with light stretching or yoga",
+         timeToComplete: 1 day,
+         task requirements: "Yoga mat or soft surface"
+      }
+   },
+   week5: {
+      task1: {
+         taskname: "Complete a practice 10k run to gauge endurance and stamina",
+         timeToComplete: 1 day,
+         task requirements: "Proper running"
+      },
+    },
+}
+
+

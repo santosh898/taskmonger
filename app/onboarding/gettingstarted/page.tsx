@@ -12,14 +12,37 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
+
 import { useRouter } from "next/navigation";
+import { goalDisintegrator } from "@/app/actions/goal";
+import { useState } from "react";
+
+interface FormData {
+  goalData: string;
+}
+
 
 export default function Home() {
-  const form = useForm();
+  const [smallerGoals, setSmallerGoals] = useState();
+
+  const form = useForm<FormData>({
+    defaultValues: {
+      goalData: '',
+    },
+  });
   const router = useRouter();
-  const onSubmit = () => {
+
+  const onSubmit = async (goalData: FormData) => {
+    //send to openAI and fetch results
+    let goalbreakdown;
+     if (goalData.goalData) 
+      goalDisintegrator(goalData.goalData).then((output)=>{
+        setSmallerGoals(output)
+    })
+
+    console.log("goalData:", goalData)
     //navigate to next page
-    router.push("/onboarding/goalbreakdown");
+    // router.push("/onboarding/goalbreakdown");
   };
   return (
     <div className="flex flex-col gap-4 p-24">
@@ -30,7 +53,7 @@ export default function Home() {
         >
           <FormField
             control={form.control}
-            name="goal-heading"
+            name="goalData"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>What is that one goal you are working on?</FormLabel>
@@ -48,6 +71,9 @@ export default function Home() {
           <Button type="submit">go</Button>
         </form>
       </Form>
+      {
+        smallerGoals && smallerGoals.message.content
+      }
     </div>
   );
 }

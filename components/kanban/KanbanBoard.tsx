@@ -68,11 +68,12 @@ function KanbanBoard({ tasks, setTasks }: any) {
   );
 
   return (
+    <div className="flex flex-col gap-y-2">
+    <p>the goal</p>
     <div
       className="
         m-auto
         flex
-        min-h-screen
         w-full
         items-center
         overflow-x-auto
@@ -127,6 +128,7 @@ function KanbanBoard({ tasks, setTasks }: any) {
           </DragOverlay>
         </Portal.Root>
       </DndContext>
+    </div>
     </div>
   );
 
